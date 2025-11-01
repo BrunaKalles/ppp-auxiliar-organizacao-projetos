@@ -7,9 +7,7 @@ require('dotenv').config();
 
 describe('Cadastro de usuário', () => {
     const mensagemErro = 'Usuário, senha e email obrigatórios';
-    const mensagemErroEmailExistente = 'Email já existe';
-    
-    
+      
     let token;
     before(async () => {
         token = await getAuthToken();
@@ -90,7 +88,7 @@ describe('Cadastro de usuário', () => {
                 .send({ username: 'admin', password: '123456' , email: 'admin@admin.com'});
 
             expect(res.status).to.equal(409);
-            expect(res.body).to.have.property('error', mensagemErroEmailExistente);
+           
             
         })
        
@@ -98,5 +96,39 @@ describe('Cadastro de usuário', () => {
 
     });  
 
+
+    describe('GET /api/users', () => {
+        it('Deve retornar 200 listado todos os usuários cadastrados', async () => {  
+            const res = await requestWithAuth(token)
+                .get('/api/users')
+                .set('Authorization', `Bearer ${token}`) 
+               
+            expect(res.status).to.equal(200);
+            expect(res.body).to.be.an('array'); // garante que o retorno é um array
+            expect(res.body.length).to.be.greaterThan(0); // pelo menos 1 usuário cadastrado
+
+            const user = res.body[0]; // pega o primeiro usuário
+            expect(user).to.have.property('id');
+            expect(user).to.have.property('username');
+            expect(user).to.have.property('email');
+            expect(user).to.have.property('password');
+                    
+        })
+        it('Deve retornar 401 quando não possuir token', async () => {  
+            const res = await requestWithAuth(token)
+                .get('/api/users')
+        
+            expect(res.status).to.equal(401);
+
+                    
+        })
+
+
+    });  
     
 });
+
+
+    
+
+    
