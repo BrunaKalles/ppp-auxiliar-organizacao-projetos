@@ -1,0 +1,27 @@
+Objetivo
+Criar uma API Rest para auxiliar na organização de projetos.
+
+Contexto
+A API possui as seguintes funcionalidades: cadastro de login com os campos usuário e senha. Consulta de login com os campos: id, usuário e senha, 
+edição de login onde pode ser alterada apenas a senha. Cadastro de cliente com os campos: nome, CPF, CNPJ, endereço e telefone. Consulta de clientes onde exibe id,
+nome, cpf, CNPJ, endereço e telefone. Consulta por id de cliente onde na consulta retornar os dados apenas do cliente filtrado. Edição de cliente onde não permite alterar
+o CPF ou CPNJ. Delete de usuário passando o ID do usuário sendo que ele só pode ser excluído se não possuir vinculo com o projeto. 
+Cadastro de projeto com os campos: nome, data início, data fim, data previsão, valor cobrado, está pago com as flags sim e não e status projeto com as opções: Não iniciado, em andamento e finalizado e campo descrição. 
+Consulta de projeto onde é exibido o retorno o id, nome do cliente, data início, data fim, data previsão, valor cobrado, status pago, status projeto e descrição.
+Consulta por projeto específico através do id, aonde retorna todos os campos do projeto. Edição de projeto onde poderá ser alterado os campos: data início, data fim, data previsão, valor cobrado, status pago e status projeto e descrição.
+Haverá um usuário master com o nome: admin e senha: 123456
+Para acessar o cadastro de clientes e o cadastro de projeto é necessário que haja o token do login
+Os campos CPF e CNPJ são únicos
+Poderá existir vários projetos para o mesmo cliente.
+O campo está pago vai ser sim ou não, não podendo ser diferente disso o vazia.
+Só poderá selecionar um status projeto por vez
+
+Regras
+Não me pergunte nada, só faça.
+A documentação da API deve ser feita com Swagger, em forma de arquivo, crie esse arquivo em uma pasta de recursos. O swagger precisa descrever o modelo JSON da resposta de cada endpoint com base na forma que API for implementada. O Swagger também deve contemplar os status code de erro que serão implementados na API.
+Adicione um endpoint para renderizar o Swagger.
+Construa um arquivo README completo para descrever o projeto
+Divida a API em camadas: routes, controllers, service e model
+Armazene os dados da API em um banco de dados em memória
+Utilize a biblioteca express para construir a API Rest
+Faça com que a autenticação seja parte do Middleware, utilizando token JWT como modelo de autenticação, e implemente as regras de autenticação seguindo as informações descritas no contexto.

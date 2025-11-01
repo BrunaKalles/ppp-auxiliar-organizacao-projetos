@@ -1,0 +1,303 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Projeto para Auxiliar Organização Projetos API",
+    "version": "1.0.0",
+    "description": "API para auxiliar na organização de projetos."
+  },
+  "paths": {
+    "/api/register": {
+      "post": {
+        "summary": "Cadastro de usuário",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string" },
+                  "email": { "type": "string", "format": "email" }
+                },
+                "required": ["username", "password", "email"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Usuário criado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } } },
+          "400": { "description": "Campos obrigatórios ausentes" },
+          "409": { "description": "Usuário já existe" }
+        }
+      }
+    },
+    "/api/login": {
+      "post": {
+        "summary": "Autenticação de usuário",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Token JWT gerado", "content": { "application/json": { "schema": { "type": "object", "properties": { "token": { "type": "string" } } } } } },
+          "401": { "description": "Credenciais inválidas" }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "summary": "Consulta de usuários",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Lista de usuários", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/User" } } } } },
+          "401": { "description": "Token obrigatório" }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "summary": "Consulta de usuário por id",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": {
+          "200": { "description": "Usuário encontrado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } } },
+          "404": { "description": "Usuário não encontrado" }
+        }
+      },
+      "put": {
+        "summary": "Alteração de senha",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object", "properties": { "password": { "type": "string" } }, "required": ["password"] }
+            }
+  
+          }
+        },
+        "responses": {
+          "200": { "description": "Senha alterada", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } } },
+          "400": { "description": "Senha obrigatória" },
+          "404": { "description": "Usuário não encontrado" }
+        }
+      },
+      "delete": {
+        "summary": "Exclusão de usuário",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": {
+          "200": { "description": "Usuário excluído" },
+          "400": { "description": "Usuário vinculado a projeto" },
+          "404": { "description": "Usuário não encontrado" }
+        }
+      }
+    },
+    "/api/clients": {
+      "post": {
+        "summary": "Cadastro de cliente",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Client" }}
+          }
+        },
+        "responses": {
+          "201": { "description": "Cliente criado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Client" } } } },
+          "400": { "description": "Campos obrigatórios ausentes" },
+          "409": { "description": "CPF ou CNPJ já existe" }
+        }
+      },
+      "get": {
+        "summary": "Consulta de clientes",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Lista de clientes", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Client" } } } } },
+          "401": { "description": "Token obrigatório" }
+        }
+      }
+    },
+    "/api/clients/{id}": {
+      "get": {
+        "summary": "Consulta de cliente por id",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": {
+          "200": { "description": "Cliente encontrado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Client" } } } },
+          "404": { "description": "Cliente não encontrado" }
+        }
+      },
+      "put": {
+        "summary": "Edição de cliente",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": { "type": "string" },
+                  "endereco": { "type": "string" },
+                  "telefone": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Cliente editado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Client" } } } },
+          "400": { "description": "Não pode alterar CPF ou CNPJ" },
+          "404": { "description": "Cliente não encontrado" }
+        }
+      }
+    },
+    "/api/projects": {
+      "post": {
+        "summary": "Cadastro de projeto",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Project" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Projeto criado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Project" } } } },
+          "400": { "description": "Campos obrigatórios ausentes ou inválidos" },
+          "404": { "description": "Cliente não encontrado" }
+        }
+      },
+      "get": {
+        "summary": "Consulta de projetos",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Lista de projetos", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/ProjectList" } } } } },
+          "401": { "description": "Token obrigatório" }
+        }
+      }
+    },
+    "/api/projects/{id}": {
+      "get": {
+        "summary": "Consulta de projeto por id",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": {
+          "200": { "description": "Projeto encontrado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Project" } } } },
+          "404": { "description": "Projeto não encontrado" }
+        }
+      },
+      "put": {
+        "summary": "Edição de projeto",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dataInicio": { "type": "string" },
+                  "dataFim": { "type": "string" },
+                  "dataPrevisao": { "type": "string" },
+                  "valorCobrado": { "type": "number" },
+                  "estaPago": { "type": "string", "enum": ["sim", "não"] },
+                  "statusProjeto": { "type": "string", "enum": ["Não iniciado", "Em andamento", "Finalizado"] },
+                  "descricao": { "type": "string" }
+                },
+                "required": ["valorCobrado", "estaPago", "statusProjeto"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Projeto editado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Project" } } } },
+          "400": { "description": "Campos inválidos" },
+          "404": { "description": "Projeto não encontrado" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "required": ["username", "email", "password"],
+        "properties": {
+          "id": { "type": "integer" },
+          "username": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" }
+        }
+      },
+      "Client": {
+        "type": "object",
+        "required": ["nome"],
+        "properties": {
+          "nome": { "type": "string" },
+          "cpf": { "type": "string" },
+          "cnpj": { "type": "string" },
+          "endereco": { "type": "string" },
+          "telefone": { "type": "string" }
+        }
+      },
+      "Project": {
+        "type": "object",
+        "required": ["nome", "clienteId", "valorCobrado", "estaPago", "statusProjeto"],
+        "properties": {
+          "nome": { "type": "string" },
+          "clienteId": { "type": "integer" },
+          "dataInicio": { "type": "string" },
+          "dataFim": { "type": "string" },
+          "dataPrevisao": { "type": "string" },
+          "valorCobrado": { "type": "number" },
+          "estaPago": { "type": "string", "enum": ["sim", "não"] },
+          "statusProjeto": { "type": "string", "enum": ["Não iniciado", "Em andamento", "Finalizado"] },
+          "descricao": { "type": "string" }
+        }
+      },
+      "ProjectList": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "nomeCliente": { "type": "string" },
+          "dataInicio": { "type": "string" },
+          "dataFim": { "type": "string" },
+          "dataPrevisao": { "type": "string" },
+          "valorCobrado": { "type": "number" },
+          "estaPago": { "type": "string", "enum": ["sim", "não"] },
+          "statusProjeto": { "type": "string", "enum": ["Não iniciado", "Em andamento", "Finalizado"] },
+          "descricao": { "type": "string" }
+        }
+      }
+    }
+  },
+  "security": [{ "bearerAuth": [] }]
+}
