@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha ./test/**/*.test.js --timeout=200000"
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,16 @@
   "bugs": {
     "url": "https://github.com/BrunaKalles/ppp-auxiliar-organizacao-projetos/issues"
   },
-  "homepage": "https://github.com/BrunaKalles/ppp-auxiliar-organizacao-projetos#readme"
+  "homepage": "https://github.com/BrunaKalles/ppp-auxiliar-organizacao-projetos#readme",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "chai": "^6.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mocha": "^11.7.4",
+    "supertest": "^7.1.4",
+    "swagger-ui-express": "^5.0.1"
+  }
 }
