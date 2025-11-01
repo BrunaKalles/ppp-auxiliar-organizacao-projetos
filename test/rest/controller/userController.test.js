@@ -5,7 +5,7 @@ const { requestWithAuth } = require('../helpers/requestwithAuthentication');
 require('dotenv').config();
 
 
-describe('Cadastro de usuário', () => {
+describe('Criação, edição e deleção de usuário', () => {
     const mensagemErro = 'Usuário, senha e email obrigatórios';
       
     let token;
@@ -88,8 +88,17 @@ describe('Cadastro de usuário', () => {
                 .send({ username: 'admin', password: '123456' , email: 'admin@admin.com'});
 
             expect(res.status).to.equal(409);
-           
-            
+                  
+        })
+
+        it('Deve retornar 400 quando não informado o token', async () => {  
+            const res = await requestWithAuth(token)
+                .post('/api/register')
+               // .set('Authorization', `Bearer ${token}`) 
+                .send({ username: 'admin', password: '123456' , email: uniqueEmail});
+
+            expect(res.status).to.equal(400);
+                  
         })
        
 
@@ -98,7 +107,7 @@ describe('Cadastro de usuário', () => {
 
 
     describe('GET /api/users', () => {
-        it('Deve retornar 200 listado todos os usuários cadastrados', async () => {  
+        it('Deve retornar 200 listando todos os usuários cadastrados', async () => {  
             const res = await requestWithAuth(token)
                 .get('/api/users')
                 .set('Authorization', `Bearer ${token}`) 
@@ -123,9 +132,70 @@ describe('Cadastro de usuário', () => {
                     
         })
 
-
     });  
+
+    describe('GET /api/users/{id}', () => {
+        const userId = 1; // ID do usuário a ser buscado
+
+        it('Deve retornar 200 listando o usuário cadastrado', async () => {  
+            
+            const res = await requestWithAuth(token)
+                 .get(`/api/users/${userId}`)
+                .set('Authorization', `Bearer ${token}`) 
+               
+            expect(res.status).to.equal(200);
+                       
+            expect(res.body).to.have.property('id', userId);
+            expect(res.body).to.have.property('username');
+            expect(res.body).to.have.property('email');
+            expect(res.body).to.have.property('password');
+                    
+        })
+
+        it('Deve retornar 404 ao filtrar por id não cadastrado', async () => {  
+            const userId = 99999; // ID do usuário não cadastrado
+            const res = await requestWithAuth(token)
+                .get(`/api/users/${userId}`)
+                .set('Authorization', `Bearer ${token}`) 
+               
+            expect(res.status).to.equal(404);
+ 
+                    
+        })
+
+
+        it('Deve retornar 404 quando não possuir token', async () => {  
+            const res = await requestWithAuth(token)
+                .get(`/api/users/${userId}`)
+              //  .set('Authorization', `Bearer ${token}`) 
+        
+            expect(res.status).to.equal(404);
+        })
+
+    });
     
+     describe('PUT /api/users/{id}', () => {
+       // const userId = 1; // ID do usuário a ser buscado
+
+
+        it('Deve retornar 200 listando o usuário cadastrado', async () => {  
+            
+            const res = await requestWithAuth(token)
+                .get(`/api/users/${userId}`)
+                .set('Authorization', `Bearer ${token}`) 
+               
+            expect(res.status).to.equal(200);
+                       
+            expect(res.body).to.have.property('id', userId);
+            expect(res.body).to.have.property('username');
+            expect(res.body).to.have.property('email');
+            expect(res.body).to.have.property('password');
+                    
+        })
+
+       
+    });
+
 });
 
 
