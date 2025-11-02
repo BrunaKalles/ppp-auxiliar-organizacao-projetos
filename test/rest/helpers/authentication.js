@@ -5,7 +5,7 @@ require('dotenv').config();
 
 async function getAuthToken() {
 
-     const baseUrl = process.env.BASE_URL;
+    const baseUrl = process.env.BASE_URL;
 
     const res = await request(baseUrl)
         .post('/api/login')
