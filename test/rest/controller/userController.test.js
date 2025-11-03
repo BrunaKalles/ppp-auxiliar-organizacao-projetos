@@ -236,5 +236,65 @@ describe('Criação, edição e deleção de usuário', () => {
     });
 
 
+    describe('DELETE /api/users{id}', () => {
+        it('Deve retornar 200 quando usuário deletado com sucesso', async () => {  
+            const res = await requestWithAuth(token)
+                .post('/api/register')
+                .set('Authorization', `Bearer ${token}`) 
+                .send({ username: 'admin', password: '123456' , email: uniqueEmail});
+
+            const res1 = await requestWithAuth(token)
+                .get('/api/users')
+                .set('Authorization', `Bearer ${token}`)
+
+            const users = res1.body;
+            const ultimoUsuario = users[users.length - 1];
+
+            expect(ultimoUsuario).to.have.property('id');
+
+            const deleteRes = await request(baseUrl)
+               .delete(`/api/users/${ultimoUsuario.id}`)
+               .set('Authorization', `Bearer ${token}`);
+
+            console.log('ID do usuário deletado:', ultimoUsuario.id);
+            expect(deleteRes.status).to.equal(200);
+
+       
+        })
+
+        it('Deve retornar 400 quando não informado o token na deleção', async () => {  
+     
+            const ultimoUsuario = users[users.length - 1];
+
+            expect(ultimoUsuario).to.have.property('id');
+
+            const deleteRes = await request(baseUrl)
+               .delete(`/api/users/${ultimoUsuario.id}`)
+            //   .set('Authorization', `Bearer ${token}`);
+
+            expect(deleteRes.status).to.equal(400);
+
+       
+        })
+        it('Deve retornar 404 quando não encontrado usuário para deletar', async () => {  
+     
+            const usuarioNaoExistenteId = 999999;
+
+            const deleteRes = await request(baseUrl)
+               .delete(`/api/users/${usuarioNaoExistenteId}`)
+              .set('Authorization', `Bearer ${token}`);
+
+            
+            expect(deleteRes.status).to.equal(404);
+
+       
+        })
+
+    
+
+
+    });  
+
+
 
 })
