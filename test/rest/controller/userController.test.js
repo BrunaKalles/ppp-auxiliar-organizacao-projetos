@@ -199,7 +199,6 @@ describe('Criação, edição e deleção de usuário', () => {
                 .set('Authorization', `Bearer ${token}`) 
                 .send({ password: novaSenha });
            
-            console.log('Nova senha gerada para o teste:', novaSenha);
             expect(res.status).to.equal(200);
 
             // Busca novamente o usuário atualizado via API
@@ -256,7 +255,6 @@ describe('Criação, edição e deleção de usuário', () => {
                .delete(`/api/users/${ultimoUsuario.id}`)
                .set('Authorization', `Bearer ${token}`);
 
-            console.log('ID do usuário deletado:', ultimoUsuario.id);
             expect(deleteRes.status).to.equal(200);
 
        
@@ -281,13 +279,12 @@ describe('Criação, edição e deleção de usuário', () => {
             const usuarioNaoExistenteId = 999999;
 
             const deleteRes = await request(baseUrl)
-               .delete(`/api/users/${usuarioNaoExistenteId}`)
-              .set('Authorization', `Bearer ${token}`);
+                .delete(`/api/users/${usuarioNaoExistenteId}`)
+                .set('Authorization', `Bearer ${token}`);
 
             
             expect(deleteRes.status).to.equal(404);
 
-       
         })
 
     

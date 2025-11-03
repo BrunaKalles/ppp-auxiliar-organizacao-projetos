@@ -19,18 +19,15 @@ function getUsers(req, res) {
 
 function getUserById(req, res) {
   const user = db.users.find(u => u.id === parseInt(req.params.id));
-  console.log('getUserById - usuário encontrado:', user);
   if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
   res.json({ id: user.id, username: user.username, email: user.email, password: user.password });
 }
 
 function updatePassword(req, res) {
   const user = db.users.find(u => u.id === parseInt(req.params.id));
-  console.log('updatePassword - usuário antes:', user);
   if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
   if (!req.body.password) return res.status(400).json({ error: 'Senha obrigatória' });
   user.password = req.body.password;
-  console.log('updatePassword - usuário depois:', user);
   res.json({ id: user.id, username: user.username, email: user.email, password: user.password });
 }
 
