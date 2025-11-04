@@ -28,10 +28,7 @@ describe('Criar, editar e listar cliente', () => {
         uniqueCNPJ = generateCNPJ();
     });
 
-    
-
-
-    describe('POST /api/client', () => {
+    describe('POST /api/clients', () => {
         it('Deve retornar 201 quando cadastro do cliente PF realizado com sucesso', async () => {  
             const res = await requestWithAuth(token)
                 .post('/api/clients')
@@ -81,7 +78,7 @@ describe('Criar, editar e listar cliente', () => {
 
         })
 
-         it.only('Deve retornar 400 quando enviar a requisição sem token', async () => {  
+         it('Deve retornar 400 quando enviar a requisição sem token', async () => {  
             const res = await requestWithAuth(token)
                 .post('/api/clients')
                 //.set('Authorization', `Bearer ${token}`)
@@ -90,6 +87,33 @@ describe('Criar, editar e listar cliente', () => {
 
 
         })
+
+    });  
+
+
+
+    describe('GET /api/clients', () => {
+        it('Deve retornar 200 quando listar todos os clientes cadastrados', async () => {  
+            const res = await requestWithAuth(token)
+                .get('/api/clients')
+                .set('Authorization', `Bearer ${token}`)
+
+        
+            expect(res.status).to.equal(200);
+            expect(res.body).to.be.an('array');
+            expect(res.body).have
+
+        })
+        it.only('Deve retornar 401 quando não informado o token', async () => {  
+            const res = await requestWithAuth(token)
+                .get('/api/clients')
+             //   .set('Authorization', `Bearer ${token}`)
+
+      
+            expect(res.status).to.equal(401);
+
+        })
+        
 
 
 
