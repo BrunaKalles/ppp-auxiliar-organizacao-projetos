@@ -93,11 +93,11 @@ describe('Criar, editar e listar cliente', () => {
 
 
     describe('GET /api/clients', () => {
-        const userId = 1; // ID do usuário a ser buscado
+        const clientId = 1; // ID do usuário a ser buscado
 
         it('Deve retornar 200 quando listar todos os clientes cadastrados', async () => {  
             const res = await requestWithAuth(token)
-                .get(`/api/clients/${userId}`)
+                .get(`/api/clients/${clientId}`)
                 .set('Authorization', `Bearer ${token}`)
                 
 
