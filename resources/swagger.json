@@ -265,7 +265,8 @@
           "cpf": { "type": "string" },
           "cnpj": { "type": "string" },
           "endereco": { "type": "string" },
-          "telefone": { "type": "string" }
+          "telefone": { "type": "string" },
+          "email": { "type": "string" }
         }
       },
       "Project": {

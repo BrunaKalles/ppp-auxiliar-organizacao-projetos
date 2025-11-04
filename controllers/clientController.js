@@ -1,13 +1,14 @@
 const db = require('../model/db');
 
 function registerClient(req, res) {
-  const { nome, cpf, cnpj, endereco, telefone } = req.body;
-  if (!nome || (!cpf && !cnpj) || !endereco || !telefone) return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
+  const { nome, cpf, cnpj, endereco, telefone, email } = req.body;
+  if (!nome || (!cpf && !cnpj) || !endereco || !telefone || !email) return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
+  if (email && db.clients.find(c => c.email === email)) return res.status(409).json({ error: 'Email já existe' });
   if (cpf && db.clients.find(c => c.cpf === cpf)) return res.status(409).json({ error: 'CPF já existe' });
   if (cnpj && db.clients.find(c => c.cnpj === cnpj)) return res.status(409).json({ error: 'CNPJ já existe' });
   const id = db.clients.length ? db.clients[db.clients.length - 1].id + 1 : 1;
-  db.clients.push({ id, nome, cpf, cnpj, endereco, telefone });
-  res.status(201).json({ id, nome, cpf, cnpj, endereco, telefone });
+  db.clients.push({ id, nome, cpf, cnpj, endereco, telefone, email });
+  res.status(201).json({ id, nome, cpf, cnpj, endereco, telefone, email });
 }
 
 function getClients(req, res) {
