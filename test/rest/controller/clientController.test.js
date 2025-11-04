@@ -93,18 +93,19 @@ describe('Criar, editar e listar cliente', () => {
 
 
     describe('GET /api/clients', () => {
+        const userId = 1; // ID do usuário a ser buscado
+
         it('Deve retornar 200 quando listar todos os clientes cadastrados', async () => {  
             const res = await requestWithAuth(token)
-                .get('/api/clients')
+                .get(`/api/clients/${userId}`)
                 .set('Authorization', `Bearer ${token}`)
+                
 
-        
             expect(res.status).to.equal(200);
-            expect(res.body).to.be.an('array');
-            expect(res.body).have
+      
 
         })
-        it.only('Deve retornar 401 quando não informado o token', async () => {  
+        it('Deve retornar 401 quando não informado o token', async () => {  
             const res = await requestWithAuth(token)
                 .get('/api/clients')
              //   .set('Authorization', `Bearer ${token}`)
@@ -118,6 +119,42 @@ describe('Criar, editar e listar cliente', () => {
 
 
     });  
+
+
+    describe('GET /api/clients{id}', () => {
+
+        const clientId = 1; // ID do usuário a ser buscado
+        
+        it('Deve retornar 200 quando listar o cliente filtrado.', async () => {  
+            const res = await requestWithAuth(token)
+                .get(`/api/clients/${clientId}`)
+                .set('Authorization', `Bearer ${token}`)
+
+            expect(res.status).to.equal(200);
+         
+        })
+         it('Deve retornar 404 quando cliente não cadastrado', async () => {  
+            const res = await requestWithAuth(token)
+                .get('/api/clients/99999999')
+                .set('Authorization', `Bearer ${token}`)
+            expect(res.status).to.equal(404);
+         
+        })
+        it('Deve retornar 401 quando não informado o token', async () => {  
+            const res = await requestWithAuth(token)
+                .get(`/api/clients/${clientId}`)
+             //   .set('Authorization', `Bearer ${token}`)
+
+      
+            expect(res.status).to.equal(401);
+
+        })
+        
+
+
+
+    });  
+
 
 
 

@@ -150,7 +150,7 @@ describe('Criação, edição e deleção de usuário', () => {
         it('Deve retornar 200 listando o usuário cadastrado', async () => {  
             
             const res = await requestWithAuth(token)
-                 .get(`/api/users/${userId}`)
+                .get(`/api/users/${userId}`)
                 .set('Authorization', `Bearer ${token}`) 
                
             expect(res.status).to.equal(200);
