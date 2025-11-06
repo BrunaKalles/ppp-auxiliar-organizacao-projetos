@@ -5,6 +5,7 @@ const { requestWithAuth } = require('../helpers/requestwithAuthentication');
 const { generateCPF, generateCNPJ, generateUniqueEmail } = require('../helpers/identifiers');
 const { clients } = require('../../../model/db');
 const db = require('../../../model/db');
+const { get, put } = require('../../../app');
 require('dotenv').config();
 
 
@@ -149,11 +150,175 @@ describe('Criar, editar e listar cliente', () => {
             expect(res.status).to.equal(401);
 
         })
-        
-
-
 
     });  
+
+    describe('PUT /api/clients{id}', () => {           
+        it('Deve retornar 200 quando alterado o cliente filtrado com sucesso.', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/clients/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const clientes = getRes.body;
+            const ultimocliente = clientes[clientes.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put(`/api/clients/${ultimocliente.id}`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ nome: 'Cliente Editado', endereco: 'Rua Editada, 456', telefone: '11988888888' });
+
+            expect(putRes.body.nome).to.equal('Cliente Editado');
+            expect(putRes.status).to.equal(200);
+
+         
+        })
+        
+        it('Deve retornar 400 quando é enviado o campo nome vazio.', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/clients/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const clientes = getRes.body;
+            const ultimocliente = clientes[clientes.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put(`/api/clients/${ultimocliente.id}`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ nome: '', endereco: 'Rua Editada, 456', telefone: '11988888888' });
+
+            expect(putRes.status).to.equal(400);
+            
+         
+        })
+
+
+        it('Deve retornar 400 quando removido o campo nome', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/clients/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const clientes = getRes.body;
+            const ultimocliente = clientes[clientes.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put(`/api/clients/${ultimocliente.id}`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ endereco: 'Rua Editada, 456', telefone: '11988888888' });
+
+            expect(putRes.status).to.equal(400);
+            
+         
+        })
+
+        it('Deve retornar 200 quando enviado o endereço vazio', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/clients/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const clientes = getRes.body;
+            const ultimocliente = clientes[clientes.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put(`/api/clients/${ultimocliente.id}`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ nome: 'Teste', endereco: '', telefone: '11988888888' });
+
+            expect(putRes.status).to.equal(200);
+
+        })
+
+        it('Deve retornar 200 quando enviado sem o campo endereço', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/clients/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const clientes = getRes.body;
+            const ultimocliente = clientes[clientes.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put(`/api/clients/${ultimocliente.id}`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ nome: 'Teste',  telefone: '11988888888' });
+
+            expect(putRes.status).to.equal(200);
+
+        })
+
+
+        it('Deve retornar 200 quando enviado o campo telefone vazio', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/clients/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const clientes = getRes.body;
+            const ultimocliente = clientes[clientes.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put(`/api/clients/${ultimocliente.id}`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ nome: 'Cliente Editado', endereco: 'Rua Editada, 456', telefone: ''});
+
+            expect(putRes.status).to.equal(200);
+
+        })
+
+        it('Deve retornar 200 quando remover o campo telefone', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/clients/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const clientes = getRes.body;
+            const ultimocliente = clientes[clientes.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put(`/api/clients/${ultimocliente.id}`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ nome: 'Cliente Editado', endereco: 'Rua Editada, 456'});
+
+            expect(putRes.status).to.equal(200);
+
+        })
+
+        it('Deve retornar 404 quando cliente inexistente', async () => {  
+            
+            const clientId = 9999999999;
+            const putRes =  await requestWithAuth(token)
+                .put(`/api/clients/${clientId}`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ nome: 'Cliente Editado', endereco: 'Rua Editada, 456'});
+
+            expect(putRes.status).to.equal(404);
+
+        })
+
+        it('Deve retornar 400 quando enviado sem token', async () => {  
+            
+            const clientId = 9999999999;
+            const putRes =  await requestWithAuth(token)
+                .put(`/api/clients/${clientId}`)
+                .set('Authorization', `Bearer ${''}`)
+                .send({ nome: 'Cliente Editado', endereco: 'Rua Editada, 456'});
+
+            expect(putRes.status).to.equal(400);
+
+        })
+
+    });  
+
 
 
 

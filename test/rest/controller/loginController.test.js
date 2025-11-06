@@ -50,7 +50,7 @@ describe('Autenticação de usuário', () => {
             expect(res.body).to.have.property('error', mensagemErro); 
         })
 
-        it('Deve retornar 401 quando campo obrigatório username inálido e senha válida', async () => {  
+        it('Deve retornar 401 quando campo obrigatório username inválido e senha válida', async () => {  
             const res = await request(baseUrl)
                 .post('/api/login')
                 .send({username: 'admin1', password: '123456' });

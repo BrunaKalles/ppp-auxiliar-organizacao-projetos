@@ -157,15 +157,17 @@
                   "nome": { "type": "string" },
                   "endereco": { "type": "string" },
                   "telefone": { "type": "string" }
-                }
+                },
+                "required": ["nome"]
               }
             }
           }
         },
         "responses": {
           "200": { "description": "Cliente editado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Client" } } } },
-          "400": { "description": "Não pode alterar CPF ou CNPJ" },
-          "404": { "description": "Cliente não encontrado" }
+          "422": { "description": "Não pode alterar CPF ou CNPJ" },
+          "404": { "description": "Cliente não encontrado" },
+          "400": { "description": "Campos obrigatórios ausentes" }
         }
       }
     },

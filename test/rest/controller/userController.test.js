@@ -231,6 +231,19 @@ describe('Criação, edição e deleção de usuário', () => {
                   
         })
 
+        
+        it('Deve retornar 404 quando não encontrado o usuário', async () => {  
+            const userId = 9999999999;
+           
+
+            const res = await requestWithAuth(token)
+                .put(`/api/users/${userId}/password`)
+                .set('Authorization', `Bearer ${token}`) 
+                .send({ password: novaSenha });
+           
+            expect(res.status).to.equal(404);   
+             })
+
       
     });
 
