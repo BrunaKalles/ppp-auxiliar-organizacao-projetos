@@ -26,7 +26,8 @@ function updateClient(req, res) {
   if (!client) return res.status(404).json({ error: 'Cliente não encontrado' });
   const { nome, endereco, telefone } = req.body;
   if (req.body.cpf || req.body.cnpj) return res.status(400).json({ error: 'Não pode alterar CPF ou CNPJ' });
-  if (nome) client.nome = nome;
+  if (!nome) return res.status(400).json({ error: 'O campo nome é obrigatório na edição.' });
+  client.nome = nome;
   if (endereco) client.endereco = endereco;
   if (telefone) client.telefone = telefone;
   res.json(client);
