@@ -165,13 +165,28 @@ describe('Criar, editar e listar projeto', () => {
                 .post('/api/projects')
                 .set('Authorization', `Bearer ${token}`) 
                 .send({nome: 'Teste 1', clienteId: 1 , dataInicio: '2026-11-06', dataFim: '2025-12-31', dataPrevisao: '2025-12-31',valorCobrado: 50000.00, estaPago: 'sim', statusProjeto: 'Finalizado', descricao: "testando"});
-            
       
             expect(res.status).to.equal(400);
-       //     expect(res.body.message).to.equal('Status de projeto inválido');
-        
         })
 
+    describe('GET /api/project', () => {
+        it('Deve retornar 200 quando listar todos os projetos cadastrados', async () => {  
+            const res = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                    
+            expect(res.status).to.equal(200);
+
+        })
+        it('Deve retornar 401 quando não informado o token', async () => {  
+            const res = await requestWithAuth(token)
+                .get('/api/clients')
+             //   .set('Authorization', `Bearer ${token}`)
+            expect(res.status).to.equal(401);
+
+        })
+        
+    });  
 
 
 
