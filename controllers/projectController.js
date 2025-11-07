@@ -49,13 +49,15 @@ function getProjectById(req, res) {
 }
 
 function updateProject(req, res) {
+
   const project = db.projects.find(p => p.id === parseInt(req.params.id));
   if (!project) return res.status(404).json({ error: 'Projeto não encontrado' });
   const { nome, clienteId, dataInicio, dataFim, dataPrevisao, valorCobrado, estaPago, statusProjeto, descricao } = req.body;
   // Validação de campos obrigatórios não vazios ou em branco para update
+  // Permitir alteração do nome do projeto, tornando obrigatório
   if (
     !nome || typeof nome !== 'string' || nome.trim() === '' ||
-    !clienteId || String(clienteId).trim() === '' ||
+    clienteId === undefined || clienteId === null || String(clienteId).trim() === '' || isNaN(Number(clienteId)) ||
     valorCobrado === undefined || valorCobrado === null || valorCobrado === '' || isNaN(Number(valorCobrado)) ||
     !estaPago || typeof estaPago !== 'string' || estaPago.trim() === '' ||
     !statusProjeto || typeof statusProjeto !== 'string' || statusProjeto.trim() === ''
@@ -72,7 +74,7 @@ function updateProject(req, res) {
   project.valorCobrado = valorCobrado;
   project.estaPago = estaPago;
   project.statusProjeto = statusProjeto;
-  if (descricao) project.descricao = descricao;
+  if (descricao !== undefined) project.descricao = descricao;
   res.json(project);
 }
 

@@ -192,7 +192,7 @@ describe('Criar, editar e listar projeto', () => {
 
         const projectId = 1; // ID do projeto a ser buscado
         
-        it.only('Deve retornar 200 quando listar o projeto filtrado.', async () => {  
+        it('Deve retornar 200 quando listar o projeto filtrado.', async () => {  
             const res = await requestWithAuth(token)
                 .get(`/api/projects/${projectId}`)
                 .set('Authorization', `Bearer ${token}`)
@@ -201,14 +201,14 @@ describe('Criar, editar e listar projeto', () => {
             expect(res.body).to.include.all.keys('id', 'nome', 'clienteId', 'dataInicio', 'dataFim', 'dataPrevisao', 'valorCobrado', 'estaPago', 'statusProjeto', 'descricao');
          
         })
-        it.only('Deve retornar 404 quando projeto não cadastrado', async () => {  
+        it('Deve retornar 404 quando projeto não cadastrado', async () => {  
             const res = await requestWithAuth(token)
                 .get('/api/projects/99999999')
                 .set('Authorization', `Bearer ${token}`)
             expect(res.status).to.equal(404);
          
         })
-        it.only('Deve retornar 401 quando não informado o token', async () => {  
+        it('Deve retornar 401 quando não informado o token', async () => {  
             const res = await requestWithAuth(token)
                 .get(`/api/projects/${projectId}`)
              //   .set('Authorization', `Bearer ${token}`)
@@ -220,6 +220,334 @@ describe('Criar, editar e listar projeto', () => {
 
     }); 
 
+    describe('PUT /api/projects{id}', () => {           
+        it('Deve retornar 200 quando alterado o projeto com sucesso.', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projetos = getRes.body;
+            const ultimoProjeto = projetos[projetos.length - 1];
+            
+            const res = await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${token}`) 
+                .send({nome: 'Projeto da Bruna', clienteId: 1, dataInicio: '2025-11-06', dataFim: '2025-12-31', dataPrevisao: '2025-12-31', valorCobrado: 50000.00, estaPago: 'sim', statusProjeto: 'Em andamento', descricao: 'Descrição do projeto da Bruna'});
+
+            expect(res.status).to.equal(200);
+            expect(res.body).to.be.an('object');
+   
+        }) 
+           
+        
+        it('Deve retornar 400 quando é enviado o campo nome vazio.', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projetos = getRes.body;
+            const ultimoProjeto = projetos[projetos.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ nome: '',clienteId: 1,dataInicio: '2025-12-01', dataFim: '2026-01-31', dataPrevisao: '2026-01-31', valorCobrado: 60000.00, estaPago: 'não', statusProjeto: 'Finalizado', descricao: 'Projeto atualizado'});
+
+            expect(putRes.status).to.equal(400);
+            
+         
+        })
+
+
+        it('Deve retornar 400 quando removido o campo nome', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projetos = getRes.body;
+            const ultimoProjeto = projetos[projetos.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ clienteId: 1,dataInicio: '2025-12-01', dataFim: '2026-01-31', dataPrevisao: '2026-01-31', valorCobrado: 60000.00, estaPago: 'não', statusProjeto: 'Finalizado', descricao: 'Projeto atualizado' });
+
+            expect(putRes.status).to.equal(400);
+
+        })
+        it('Deve retornar 400 quando removido o campo valor cobrado.', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projetos = getRes.body;
+            const ultimoProjeto = projetos[projetos.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ nome: 'teste', clienteId: 1, dataInicio: '2025-12-01', dataFim: '2026-01-31', dataPrevisao: '2026-01-31', estaPago: 'não', statusProjeto: 'Finalizado', descricao: 'Projeto atualizado' });
+
+            expect(putRes.status).to.equal(400);
+            
+         
+        })
+        it('Deve retornar 400 quando o campo está pago encontra-se vazio.', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projetos = getRes.body;
+            const ultimoProjeto = projetos[projetos.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${token}`)
+                .send({nome: 'teste',clienteId: 1, dataInicio: '2025-12-01', dataFim: '2026-01-31', dataPrevisao: '2026-01-31', valorCobrado: 60000.00, estaPago: '', statusProjeto: 'Finalizado', descricao: 'Projeto atualizado' });
+
+            expect(putRes.status).to.equal(400);
+            
+         
+        })
+        it('Deve retornar 400 quando removido o campo está pago.', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projetos = getRes.body;
+            const ultimoProjeto = projetos[projetos.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${token}`)
+                .send({nome: 'teste', clienteId: 1,dataInicio: '2025-12-01', dataFim: '2026-01-31', dataPrevisao: '2026-01-31', valorCobrado: 60000.00, statusProjeto: 'Finalizado', descricao: 'Projeto atualizado' });
+
+            expect(putRes.status).to.equal(400);
+            
+        })
+        it('Deve retornar 400 quando valor do campo está pago é inválido.', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projetos = getRes.body;
+            const ultimoProjeto = projetos[projetos.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${token}`)
+                .send({nome: 'teste', clienteId: 1,dataInicio: '2025-12-01', dataFim: '2026-01-31', dataPrevisao: '2026-01-31', valorCobrado: 60000.00, estaPago: 'nãoo', statusProjeto: 'Finalizado', descricao: 'Projeto atualizado' });
+
+            expect(putRes.status).to.equal(400);
+            
+        })
+
+        it('Deve retornar 400 quando o campo status projeto está vazio.', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projetos = getRes.body;
+            const ultimoProjeto = projetos[projetos.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${token}`)
+                .send({nome: 'teste',clienteId: 1, dataInicio: '2025-12-01', dataFim: '2026-01-31', dataPrevisao: '2026-01-31', valorCobrado: 60000.00, estaPago: 'não', statusProjeto: '', descricao: 'Projeto atualizado' });
+
+            expect(putRes.status).to.equal(400);
+            
+         
+        })
+        it('Deve retornar 400 quando removido o campo status projeto.', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projetos = getRes.body;
+            const ultimoProjeto = projetos[projetos.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${token}`)
+                .send({nome: 'teste',clienteId: 1, dataInicio: '2025-12-01', dataFim: '2026-01-31', dataPrevisao: '2026-01-31', valorCobrado: 60000.00, estaPago: 'não',  descricao: 'Projeto atualizado' });
+
+            expect(putRes.status).to.equal(400);
+
+        })
+        it('Deve retornar 400 quando campo status projeto inexistente.', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projetos = getRes.body;
+            const ultimoProjeto = projetos[projetos.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${token}`)
+                .send({nome: 'teste',clienteId: 1, dataInicio: '2025-12-01', dataFim: '2026-01-31', dataPrevisao: '2026-01-31', valorCobrado: 60000.00, estaPago: 'não', statusProjeto: 'Finalizados', descricao: 'Projeto atualizado' });
+
+            expect(putRes.status).to.equal(400);
+            
+         
+        })
+
+
+        it('Deve retornar 200 quando enviado sem o campo data início', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projeto = getRes.body;
+            const ultimoProjeto = projeto[projeto.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ nome: 'teste',clienteId: 1, dataFim: '2026-01-31', dataPrevisao: '2026-01-31', valorCobrado: 60000.00, estaPago: 'não', statusProjeto: 'Finalizado', descricao: 'Projeto atualizado'   });
+
+            expect(putRes.status).to.equal(200);
+
+        })
+
+        it('Deve retornar 200 quando remover o campo data fim', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projeto = getRes.body;
+            const ultimoProjeto = projeto[projeto.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put(`/api/clients/${ultimoProjeto.id}`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ nome: 'teste',clienteId: 1, dataInicio: '2025-12-01', dataPrevisao: '2026-01-31', valorCobrado: 60000.00, estaPago: 'não', statusProjeto: 'Finalizado', descricao: 'Projeto atualizado'});
+
+            expect(putRes.status).to.equal(200);
+
+        })
+        it('Deve retornar 200 quando enviado o campo data previsão vazio', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projeto = getRes.body;
+            const ultimoProjeto = projeto[projeto.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${token}`)
+                .send({nome: 'teste',clienteId: 1, dataInicio: '2025-12-01', dataFim: '2026-01-31', dataPrevisao: '', valorCobrado: 60000.00, estaPago: 'não', statusProjeto: 'Finalizado', descricao: 'Projeto atualizado'  });
+
+            expect(putRes.status).to.equal(200);
+
+        })
+
+        it('Deve retornar 200 quando remover o campo data previsão', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projeto = getRes.body;
+            const ultimoProjeto = projeto[projeto.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${token}`)
+                .send({  nome: 'teste',clienteId: 1, dataInicio: '2025-12-01', dataFim: '2026-01-31', valorCobrado: 60000.00, estaPago: 'não', statusProjeto: 'Finalizado', descricao: 'Projeto atualizado'});
+
+            expect(putRes.status).to.equal(200);
+
+        })
+
+        it('Deve retornar 200 quando enviado o campo decrição vazio', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projeto = getRes.body;
+            const ultimoProjeto = projeto[projeto.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${token}`)
+                .send({nome: 'teste',clienteId: 1, dataInicio: '2025-12-01', dataFim: '2026-01-31', valorCobrado: 60000.00, estaPago: 'não', statusProjeto: 'Finalizado', descricao: ''});
+
+            expect(putRes.status).to.equal(200);
+
+        })
+
+        it('Deve retornar 200 quando remover o campo descrição', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(200);
+
+            const projeto = getRes.body;
+            const ultimoProjeto = projeto[projeto.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ nome: 'teste', clienteId: 1,dataInicio: '2025-12-01', dataFim: '2026-01-31', valorCobrado: 60000.00, estaPago: 'não', statusProjeto: 'Finalizado'});
+
+            expect(putRes.status).to.equal(200);
+
+        })
+
+
+        it('Deve retornar 400 quando enviado sem token', async () => {  
+            
+            const getRes = await requestWithAuth(token)
+                .get('/api/projects/')
+                .set('Authorization', `Bearer ${token}`)
+                .expect(400);
+
+            const projeto = getRes.body;
+            const ultimoProjeto = projeto[projeto.length - 1];
+
+            const putRes =  await requestWithAuth(token)
+                .put('/api/projects/' + ultimoProjeto.id)
+                .set('Authorization', `Bearer ${''}`)
+                .send({nome: 'Projeto da Bruna', clienteId: 1, dataInicio: '2025-11-06', dataFim: '2025-12-31', dataPrevisao: '2025-12-31', valorCobrado: 50000.00, estaPago: 'sim', statusProjeto: 'Em andamento', descricao: 'Descrição do projeto da Bruna'});
+
+            expect(putRes.status).to.equal(400);
+
+        })
+
+    });  
 
 
 
