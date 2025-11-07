@@ -5,7 +5,16 @@ const PAGO_OPTIONS = ['sim', 'não'];
 
 function registerProject(req, res) {
   const { nome, clienteId, dataInicio, dataFim, dataPrevisao, valorCobrado, estaPago, statusProjeto, descricao } = req.body;
-  if (!nome || !clienteId || !valorCobrado || !estaPago || !statusProjeto) return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
+  // Validação de campos obrigatórios não vazios ou em branco
+  if (
+    !nome || typeof nome !== 'string' || nome.trim() === '' ||
+    !clienteId || String(clienteId).trim() === '' ||
+    valorCobrado === undefined || valorCobrado === null || valorCobrado === '' || isNaN(Number(valorCobrado)) ||
+    !estaPago || typeof estaPago !== 'string' || estaPago.trim() === '' ||
+    !statusProjeto || typeof statusProjeto !== 'string' || statusProjeto.trim() === ''
+  ) {
+    return res.status(400).json({ error: 'Campos obrigatórios ausentes ou inválidos' });
+  }
   if (!PAGO_OPTIONS.includes(estaPago)) return res.status(400).json({ error: 'Status de pagamento inválido' });
   if (!STATUS_OPTIONS.includes(statusProjeto)) return res.status(400).json({ error: 'Status de projeto inválido' });
   const client = db.clients.find(c => c.id === clienteId);
@@ -42,15 +51,27 @@ function getProjectById(req, res) {
 function updateProject(req, res) {
   const project = db.projects.find(p => p.id === parseInt(req.params.id));
   if (!project) return res.status(404).json({ error: 'Projeto não encontrado' });
-  const { dataInicio, dataFim, dataPrevisao, valorCobrado, estaPago, statusProjeto, descricao } = req.body;
+  const { nome, clienteId, dataInicio, dataFim, dataPrevisao, valorCobrado, estaPago, statusProjeto, descricao } = req.body;
+  // Validação de campos obrigatórios não vazios ou em branco para update
+  if (
+    !nome || typeof nome !== 'string' || nome.trim() === '' ||
+    !clienteId || String(clienteId).trim() === '' ||
+    valorCobrado === undefined || valorCobrado === null || valorCobrado === '' || isNaN(Number(valorCobrado)) ||
+    !estaPago || typeof estaPago !== 'string' || estaPago.trim() === '' ||
+    !statusProjeto || typeof statusProjeto !== 'string' || statusProjeto.trim() === ''
+  ) {
+    return res.status(400).json({ error: 'Campos obrigatórios ausentes ou inválidos' });
+  }
   if (estaPago && !PAGO_OPTIONS.includes(estaPago)) return res.status(400).json({ error: 'Status de pagamento inválido' });
   if (statusProjeto && !STATUS_OPTIONS.includes(statusProjeto)) return res.status(400).json({ error: 'Status de projeto inválido' });
+  project.nome = nome;
+  project.clienteId = clienteId;
   if (dataInicio) project.dataInicio = dataInicio;
   if (dataFim) project.dataFim = dataFim;
   if (dataPrevisao) project.dataPrevisao = dataPrevisao;
-  if (valorCobrado) project.valorCobrado = valorCobrado;
-  if (estaPago) project.estaPago = estaPago;
-  if (statusProjeto) project.statusProjeto = statusProjeto;
+  project.valorCobrado = valorCobrado;
+  project.estaPago = estaPago;
+  project.statusProjeto = statusProjeto;
   if (descricao) project.descricao = descricao;
   res.json(project);
 }
