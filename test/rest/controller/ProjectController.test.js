@@ -3,7 +3,7 @@ const { expect } = require('chai');
 const { getAuthToken } = require('../helpers/authentication');
 const { requestWithAuth } = require('../helpers/requestwithAuthentication');
 const { generateCPF, generateCNPJ, generateUniqueEmail } = require('../helpers/identifiers');
-const { clients } = require('../../../model/db');
+const { projects } = require('../../../model/db');
 const db = require('../../../model/db');
 const { get, put } = require('../../../app');
 require('dotenv').config();
@@ -180,7 +180,7 @@ describe('Criar, editar e listar projeto', () => {
         })
         it('Deve retornar 401 quando não informado o token', async () => {  
             const res = await requestWithAuth(token)
-                .get('/api/clients')
+                .get('/api/projects')
              //   .set('Authorization', `Bearer ${token}`)
             expect(res.status).to.equal(401);
 
@@ -188,6 +188,37 @@ describe('Criar, editar e listar projeto', () => {
         
     });  
 
+    describe('GET /api/projects{id}', () => {
+
+        const projectId = 1; // ID do projeto a ser buscado
+        
+        it.only('Deve retornar 200 quando listar o projeto filtrado.', async () => {  
+            const res = await requestWithAuth(token)
+                .get(`/api/projects/${projectId}`)
+                .set('Authorization', `Bearer ${token}`)
+         
+            expect(res.status).to.equal(200);
+            expect(res.body).to.include.all.keys('id', 'nome', 'clienteId', 'dataInicio', 'dataFim', 'dataPrevisao', 'valorCobrado', 'estaPago', 'statusProjeto', 'descricao');
+         
+        })
+        it.only('Deve retornar 404 quando projeto não cadastrado', async () => {  
+            const res = await requestWithAuth(token)
+                .get('/api/projects/99999999')
+                .set('Authorization', `Bearer ${token}`)
+            expect(res.status).to.equal(404);
+         
+        })
+        it.only('Deve retornar 401 quando não informado o token', async () => {  
+            const res = await requestWithAuth(token)
+                .get(`/api/projects/${projectId}`)
+             //   .set('Authorization', `Bearer ${token}`)
+
+      
+            expect(res.status).to.equal(401);
+
+        })
+
+    }); 
 
 
 
