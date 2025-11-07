@@ -94,13 +94,11 @@ describe('Criar, editar e listar cliente', () => {
 
 
     describe('GET /api/clients', () => {
-        const clientId = 1; // ID do usuário a ser buscado
 
         it('Deve retornar 200 quando listar todos os clientes cadastrados', async () => {  
             const res = await requestWithAuth(token)
-                .get(`/api/clients/${clientId}`)
+                .get('/api/clients/')
                 .set('Authorization', `Bearer ${token}`)
-                
 
             expect(res.status).to.equal(200);
       
@@ -111,14 +109,10 @@ describe('Criar, editar e listar cliente', () => {
                 .get('/api/clients')
              //   .set('Authorization', `Bearer ${token}`)
 
-      
             expect(res.status).to.equal(401);
 
         })
         
-
-
-
     });  
 
 
