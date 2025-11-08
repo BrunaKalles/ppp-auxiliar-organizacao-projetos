@@ -219,6 +219,8 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "nome": { "type": "string" },
+                  "clienteId": { "type": "integer" },
                   "dataInicio": { "type": "string" },
                   "dataFim": { "type": "string" },
                   "dataPrevisao": { "type": "string" },
@@ -227,7 +229,7 @@
                   "statusProjeto": { "type": "string", "enum": ["Não iniciado", "Em andamento", "Finalizado"] },
                   "descricao": { "type": "string" }
                 },
-                "required": ["valorCobrado", "estaPago", "statusProjeto"]
+                "required": ["nome", "clienteId", "valorCobrado", "estaPago", "statusProjeto"]
               }
             }
           }
